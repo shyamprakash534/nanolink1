@@ -1,0 +1,20 @@
+groups:
+  - name: nanolink_alerts
+    rules:
+      - alert: HighLatencyP99
+        expr: histogram_quantile(0.99, sum(rate(nanolink_http_request_duration_seconds_bucket[1m])) by (le)) > 0.05
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "p99 HTTP latency exceeded 50ms"
+          description: "NanoLink p99 latency is above SLA threshold (current: {{ $value }}s)"
+
+      - alert: High5xxErrorRate
+        expr: sum(rate(nanolink_http_requests_total{status=~"5.."}[1m])) / sum(rate(nanolink_http_requests_total[1m])) * 100 > 1.0
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High 5xx error rate"
+          description: "5xx error rate is exceeding 1% threshold"

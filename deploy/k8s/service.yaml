@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nanolink-api-service
+spec:
+  type: ClusterIP
+  selector:
+    app: nanolink-api
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
