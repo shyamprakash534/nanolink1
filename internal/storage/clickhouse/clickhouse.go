@@ -3,8 +3,6 @@ package clickhouse
 import (
 	"context"
 	"database/sql"
-	"fmt"
-	"time"
 
 	"github.com/nanolink/nanolink/internal/models"
 )

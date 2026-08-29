@@ -19,8 +19,8 @@ func NewRedisClient(addr, password string) (*Client, error) {
 		DB:           0,
 		PoolSize:     200,
 		MinIdleConns: 50,
-		ReadTimeout:  20 * time.Millisecond,
-		WriteTimeout: 20 * time.Millisecond,
+		ReadTimeout: 0,
+		WriteTimeout: 5 * time.Second,
 	})
 
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
@@ -97,3 +97,5 @@ func (c *Client) EvaluateTokenBucket(ctx context.Context, key string, capacity, 
 	remainingTokens := resSlice[1].(int64)
 	return allowed, remainingTokens, nil
 }
+
+

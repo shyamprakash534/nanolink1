@@ -1,8 +1,8 @@
 package redis
-
 import (
 	"context"
 	"encoding/json"
+	"time"
 
 	"github.com/nanolink/nanolink/internal/models"
 	"github.com/redis/go-redis/v9"
@@ -33,7 +33,7 @@ func (c *Client) ReadClickEventsBatch(ctx context.Context, consumerName string, 
 		Consumer: consumerName,
 		Streams:  []string{clickStreamKey, ">"},
 		Count:    count,
-		Block:    1000,
+		Block:    1000 * time.Millisecond,
 	}).Result()
 
 	if err != nil {
@@ -68,3 +68,5 @@ func (c *Client) AckClickEvents(ctx context.Context, messageIDs []string) error 
 	}
 	return c.rdb.XAck(ctx, clickStreamKey, clickConsumerGroup, messageIDs...).Err()
 }
+
+

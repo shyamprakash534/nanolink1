@@ -73,7 +73,13 @@ func (s *AnalyticsService) RecordClick(ctx context.Context, shortCode, ip, userA
 	}
 
 	if s.redisClient != nil {
-		_ = s.redisClient.PublishClickEvent(ctx, event)
+	go func() {
+    bgCtx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+    defer cancel()
+    if err := s.redisClient.PublishClickEvent(bgCtx, event); err != nil {
+        log.Printf("[Analytics] Failed to publish click for %s: %v", shortCode, err)
+    }
+}()
 	}
 }
 
