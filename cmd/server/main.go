@@ -54,7 +54,7 @@ func main() {
 	go analyticsWorker.Start(ctx)
 
 	// Setup HTTP Router
-	router := api.SetupRouter(urlService, analyticsService, rateLimiterService)
+	router := api.SetupRouter(urlService, analyticsService, rateLimiterService, pgDB)
 
 	server := &http.Server{
 		Addr:         ":" + cfg.Port,
