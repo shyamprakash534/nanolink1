@@ -7,15 +7,15 @@ import (
 
 type Config struct {
 	Port              string
-	BaseURL           string
-	PostgresDSN       string
-	RedisAddr         string
-	RedisPassword     string
-	ClickHouseDSN     string
-	RateLimitCapacity float64
-	RateLimitRefill   float64
-	BloomCapacity     uint64
-	BloomFPRate       float64
+	BaseURL            string
+	PostgresDSN        string
+	RedisAddr          string
+	RedisPassword      string
+	ClickHouseDSN      string
+	RateLimitCapacity  float64
+	RateLimitRefill    float64
+	BloomCapacity      uint64
+	BloomFPRate        float64
 }
 
 func LoadConfig() *Config {
@@ -25,7 +25,9 @@ func LoadConfig() *Config {
 		PostgresDSN:       getEnv("DATABASE_URL", "postgres://nanolink:nanolink_secret@localhost:5432/nanolink?sslmode=disable"),
 		RedisAddr:         getEnv("REDIS_ADDR", "localhost:6379"),
 		RedisPassword:     getEnv("REDIS_PASSWORD", ""),
-		ClickHouseDSN:     getEnv("CLICKHOUSE_DSN", "clickhouse://localhost:9000/nanolink_analytics"),
+		// ClickHouse is optional. When it is not configured, NanoLink still
+		// starts and serves URL-shortening functionality without analytics storage.
+		ClickHouseDSN:     getEnv("CLICKHOUSE_DSN", ""),
 		RateLimitCapacity: getEnvFloat("RATE_LIMIT_CAPACITY", 100.0),
 		RateLimitRefill:   getEnvFloat("RATE_LIMIT_REFILL", 10.0),
 		BloomCapacity:     getEnvUint("BLOOM_CAPACITY", 10000000),
