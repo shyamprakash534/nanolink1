@@ -12,6 +12,17 @@ NanoLink is a distributed URL shortening and redirection system built with Go an
 
 ---
 
+## 🚀 Live Deployment
+
+- **Primary:** https://nanolink1.onrender.com
+- **Secondary:** https://nanolink1-1ba.onrender.com
+- **Health:** `/health`
+- **Metrics:** `/metrics`
+
+> **Deployment note:** The current Render deployment runs the core URL-shortener service with ClickHouse analytics storage intentionally disabled because no production ClickHouse instance is attached. ClickHouse remains part of the local/distributed architecture and analytics implementation.
+
+---
+
 ## 🏗️ Architecture & Component Interaction
 
 ```text
@@ -215,8 +226,8 @@ nanolink1/
 ├── engine/              # Standalone Python/FastAPI engine and benchmarks
 ├── migrations/          # Database migrations
 ├── terraform/           # AWS infrastructure as code
-├── docker-compose.yml    # Local distributed stack
-├── Dockerfile            # Production container image
+├── docker-compose.yml   # Local distributed stack
+├── Dockerfile           # Production container image
 └── .github/workflows/   # CI/CD automation
 ```
 
