@@ -60,10 +60,12 @@ func (h *URLHandler) Redirect(c *gin.Context) {
 		return
 	}
 
+	// Count only successful redirects. ResolveURL is also used by non-click
+	// endpoints such as QR generation, so click accounting belongs here.
+	h.urlService.RecordClick(code)
+
 	// Asynchronous click telemetry ingestion
-	go func(shortCode, ip, ua, ref string) {
-		h.analyticsService.RecordClick(c.Request.Context(), shortCode, ip, ua, ref)
-	}(code, c.ClientIP(), c.GetHeader("User-Agent"), c.GetHeader("Referer"))
+	h.analyticsService.RecordClick(c.Request.Context(), code, c.ClientIP(), c.GetHeader("User-Agent"), c.GetHeader("Referer"))
 
 	c.Redirect(http.StatusFound, longURL)
 }
