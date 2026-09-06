@@ -21,6 +21,7 @@ RUN apk add --no-cache ca-certificates tzdata
 
 COPY --from=builder /app/nanolink /app/nanolink
 COPY --from=builder /app/migrations /app/migrations
+COPY --from=builder /app/web /app/web
 
 EXPOSE 8080
 
