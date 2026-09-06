@@ -35,10 +35,18 @@ func main() {
 		log.Printf("Warning: Redis connection error: %v", err)
 	}
 
-	// Initialize ClickHouse
-	chClient, err := clickhouse.NewClickHouseClient(cfg.ClickHouseDSN)
-	if err != nil {
-		log.Printf("Warning: ClickHouse connection error: %v", err)
+	// Initialize ClickHouse only when explicitly configured.
+	// Render does not provide a ClickHouse service by default, so the API
+	// must not attempt to connect to localhost:9000 in production.
+	var chClient *clickhouse.Client
+	if cfg.ClickHouseDSN != "" {
+		chClient, err = clickhouse.NewClickHouseClient(cfg.ClickHouseDSN)
+		if err != nil {
+			log.Printf("Warning: ClickHouse connection error: %v (analytics storage disabled)", err)
+			chClient = nil
+		}
+	} else {
+		log.Printf("ClickHouse not configured; analytics storage is disabled")
 	}
 
 	// Initialize Services
