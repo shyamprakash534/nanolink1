@@ -1,6 +1,8 @@
 package api
 
 import (
+    "net/http"
+
     "github.com/gin-gonic/gin"
     "github.com/nanolink/nanolink/internal/api/handlers"
     "github.com/nanolink/nanolink/internal/api/middleware"
@@ -23,6 +25,18 @@ func SetupRouter(
     analyticsHandler := handlers.NewAnalyticsHandler(analyticsService, urlService)
     healthHandler := handlers.NewHealthHandler()
     authMiddleware := middleware.NewAuthMiddleware(pgDB)
+
+    // Public service information
+    r.GET("/", func(c *gin.Context) {
+        c.JSON(http.StatusOK, gin.H{
+            "service": "nanolink-api",
+            "status":  "running",
+            "message": "NanoLink URL Shortener API is running",
+            "health":  "/health",
+            "metrics": "/metrics",
+            "api":     "/api/v1/urls",
+        })
+    })
 
     // Public Health & Metrics
     r.GET("/health", healthHandler.HealthCheck)
