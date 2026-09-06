@@ -167,12 +167,16 @@ func (s *URLService) ResolveURL(ctx context.Context, shortCode string) (string, 
 		_ = s.redisClient.SetURL(ctx, shortCode, urlObj.LongURL, ttl)
 	}
 
-	// Increment Click Count asynchronously
+	return urlObj.LongURL, nil
+}
+
+// RecordClick increments the persistent click counter for a successful redirect.
+// It is intentionally separate from ResolveURL so cache hits are counted too,
+// while non-redirect lookups such as QR generation are not counted as clicks.
+func (s *URLService) RecordClick(shortCode string) {
 	go func() {
 		_ = s.urlRepo.IncrementClickCount(shortCode)
 	}()
-
-	return urlObj.LongURL, nil
 }
 
 func (s *URLService) DeleteURL(ctx context.Context, shortCode string, userID *uuid.UUID) error {
