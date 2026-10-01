@@ -63,6 +63,7 @@ NanoLink is a distributed URL shortening and redirection system built with Go an
 ```
 
 ### Core Architectural Tenets
+
 1. **Fast redirect path**: Redis caching and Bloom-filter checks reduce unnecessary database access for hot and missing keys.
 2. **Asynchronous analytics**: Redis Streams decouple redirect traffic from analytics processing and ClickHouse writes.
 3. **Horizontal scalability**: Stateless Go API nodes can run behind a load balancer and scale independently.
@@ -110,7 +111,7 @@ NanoLink uses an atomic Redis Lua operation to evaluate token availability, supp
 | `POST` | `/api/v1/urls` | Shorten long URL (custom alias & TTL support) | Optional (`X-API-Key`) |
 | `GET` | `/:code` or `/api/v1/urls/:code` | Resolve shortened URL | None |
 | `GET` | `/api/v1/urls/:code/stats` | Analytics breakdown & metrics | None |
-| `DELETE` | `/api/v1/urls/:code` | Deactivate/delete shortened URL mapping | Required (`X-API-Key`) |
+| `DELETE` | `/api/v1/urls/:code` | Deactivate/delete URL mapping | Required (`X-API-Key`) |
 | `GET` | `/api/v1/urls` | List authenticated user's shortened links | Required (`X-API-Key`) |
 | `GET` | `/api/v1/urls/:code/qr` | Generate QR code image | None |
 | `GET` | `/health` | Service health status | None |
@@ -161,7 +162,7 @@ python3 main.py
 
 ```bash
 # Go tests
- go test -v -race ./internal/...
+go test -v -race ./internal/...
 
 # Standalone engine tests
 python3 engine/test_nanolink.py
@@ -190,6 +191,8 @@ terraform apply
 ```
 
 Review and configure AWS credentials, variables, networking, and security settings before applying infrastructure.
+
+> The presence of Terraform configuration does not by itself mean these AWS resources are currently deployed. Verify the target AWS account and environment before describing them as live infrastructure.
 
 ---
 
@@ -239,10 +242,12 @@ nanolink1/
 
 GitHub: https://github.com/shyamprakash534
 
-LinkedIn: https://www.linkedin.com/in/shyam-prakash-269a74208/
+LinkedIn: https://www.linkedin.com/in/shyam-prakash-vemula-721029263
 
 ---
 
 ## 📄 License
 
-See the repository for the current project license and source distribution terms.
+**No license is currently declared in the repository.**
+
+If you intend others to legally reuse, modify or redistribute the source, add an explicit open-source license to the repository and update this section accordingly.
