@@ -128,20 +128,16 @@ func (s *URLService) ShortenURL(ctx context.Context, req models.ShortenRequest, 
 }
 
 func (s *URLService) ResolveURL(ctx context.Context, shortCode string) (string, error) {
-	// Step 1: Bloom filter fast reject
-	if !s.bloomService.MightContain(ctx, shortCode) {
-		return "", errors.New("url not found")
-	}
-
-	// Step 2: Redis Cache Lookup
-	if s.redisClient != nil {
+	// A fresh process has an empty Bloom filter even when links exist in Postgres.
+	// Skip a likely cache miss, but always consult persistent storage.
+	if s.redisClient != nil && s.bloomService.MightContain(ctx, shortCode) {
 		longURL, err := s.redisClient.GetURL(ctx, shortCode)
 		if err == nil && longURL != "" {
 			return longURL, nil
 		}
 	}
 
-	// Step 3: PostgreSQL Database Query
+	// PostgreSQL is authoritative for links missing from the cache.
 	urlObj, err := s.urlRepo.GetByShortCode(shortCode)
 	if err != nil {
 		return "", err
@@ -154,6 +150,8 @@ func (s *URLService) ResolveURL(ctx context.Context, shortCode string) (string, 
 	if urlObj.ExpiresAt != nil && time.Now().UTC().After(*urlObj.ExpiresAt) {
 		return "", errors.New("url expired")
 	}
+
+	s.bloomService.Add(ctx, shortCode)
 
 	// Populate Redis Cache
 	if s.redisClient != nil {
